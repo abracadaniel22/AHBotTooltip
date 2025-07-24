@@ -1,0 +1,11 @@
+## Interface: 30300
+## Title: AHBot Tooltip
+## Notes: Shows the price the AHBot would be willing to pay for an item. Also exposes a function other addons can query via global _G.AHBotTooltipAPI
+## Author: Abracadaniel22
+## Version: 1.0
+## SavedVariables: AHBotTooltipDB
+## X-Website: https://github.com/abracadaniel22/ahbot-tooltip
+
+AHBotTooltip.lua
+AHBotTooltipAPI.lua
+AHBotTooltipTooltips.lua
