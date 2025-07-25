@@ -6,11 +6,9 @@
 local addonName, addon = ...
 local API = {}
 local pendingQueries = {}
+API.cache = {}
 
 AHBotTooltipDB = AHBotTooltipDB or {
-    -- Note: It's a tradeoff to use cache, because users must reset the cache if the ahbot parameters are twaked in the server
-    -- Alternatively, we could have a per-session cache that resets when user logs off
-    cache = {},
     debug = false
 }
 
@@ -57,9 +55,8 @@ end
 
 -- TODO add support for querying multiple items at once and make addon batch queries if they happen less than .2s apart
 function API.QueryBuyerItemValue(itemId, forceServerCheck)
-    
-    if not forceServerCheck and AHBotTooltipDB.cache[itemId] ~= nil then
-        return AHBotTooltipDB.cache[itemId]
+    if not forceServerCheck and API.cache[itemId] ~= nil then
+        return API.cache[itemId]
     end
     if pendingQueries[itemId] then
         return
@@ -76,7 +73,7 @@ function API.HandleChatMessage(message)
             itemId = tonumber(itemId)
             price = tonumber(status)
             
-            AHBotTooltipDB.cache[itemId] = price
+            API.cache[itemId] = price
             pendingQueries[itemId] = nil
 
             if API.OnCacheUpdated then
@@ -90,7 +87,7 @@ function API.HandleChatMessage(message)
 end
 
 function API.GetBuyerItemValue(itemId)
-    return AHBotTooltipDB.cache[itemId]
+    return API.cache[itemId]
 end
 
 function API.HandleSlashCommand(msg)
@@ -100,12 +97,12 @@ function API.HandleSlashCommand(msg)
         AHBotTooltipDB.debug = not AHBotTooltipDB.debug
         API.PrintAddonMessage("Server messages will" .. (AHBotTooltipDB.debug and " " or " not ") .. "be shown.")
     elseif msg == "clear" then
-        AHBotTooltipDB.cache = {}
+        API.cache = {}
         pendingQueries = {}
         API.PrintAddonMessage("Cache cleared.")
     elseif msg == "status" then
         local cacheSize = 0
-        for _ in pairs(AHBotTooltipDB.cache) do
+        for _ in pairs(API.cache) do
             cacheSize = cacheSize + 1
         end
         API.PrintAddonMessage("Status:")
@@ -113,7 +110,7 @@ function API.HandleSlashCommand(msg)
         print("  Cached items: " .. cacheSize)
     else
         API.PrintAddonMessage("Commands:")
-        print("  /ahbot clear - Clear the cache")
+        print("  /ahbot clear - Clear the in-memory cache (or you can log out/log back in)")
         print("  /ahbot debug - Toggle hiding or showing server messages")
         print("  /ahbot status - Show addon status")
     end
