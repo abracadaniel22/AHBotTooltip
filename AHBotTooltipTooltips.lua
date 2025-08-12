@@ -28,7 +28,7 @@ function TooltipsModule.UpdateTooltip(tooltip)
     if ahbotBuyValue ~= nil then
         local formattedValue = API.FormatMoney(ahbotBuyValue)
         local itemSellPrice = TooltipsModule.GetItemSellPrice(itemId)
-        if itemSellPrice and ahbotBuyValue < itemSellPrice then
+        if itemSellPrice and ahbotBuyValue <= itemSellPrice then
             formattedValue = string.format("|cffFF0000%s|r", formattedValue)
         end
         tooltip:AddDoubleLine("AH bot pays", formattedValue)
