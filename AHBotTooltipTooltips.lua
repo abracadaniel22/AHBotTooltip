@@ -13,15 +13,25 @@ function TooltipsModule.GetItemIdFromTooltip(tooltip)
     return tonumber(link:match("item:(%d+)"))
 end
 
+function TooltipsModule.GetItemSellPrice(itemId)
+    local _, _, _, _, _, _, _, _, _, _, sellPrice = GetItemInfo(itemId)
+    return tonumber(sellPrice)
+end
+
 function TooltipsModule.UpdateTooltip(tooltip)
     local itemId = TooltipsModule.GetItemIdFromTooltip(tooltip)
     if not itemId then
         return
     end
     API.QueryBuyerItemValue(itemId)
-    local value = API.GetBuyerItemValue(itemId)
-    if value ~= nil then
-        tooltip:AddDoubleLine("AH bot pays", API.FormatMoney(value))
+    local ahbotBuyValue = API.GetBuyerItemValue(itemId)
+    if ahbotBuyValue ~= nil then
+        local formattedValue = API.FormatMoney(ahbotBuyValue)
+        local itemSellPrice = TooltipsModule.GetItemSellPrice(itemId)
+        if itemSellPrice and ahbotBuyValue < itemSellPrice then
+            formattedValue = string.format("|cffFF0000%s|r", formattedValue)
+        end
+        tooltip:AddDoubleLine("AH bot pays", formattedValue)
     end
 end
 

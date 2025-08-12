@@ -25,6 +25,7 @@ function API.PrintAddonMessage(text)
     print(string.format(AHBOT_COLOUR_TEXT, "[AHBotTooltip]") .. " " .. text)
 end
 
+-- TODO use FormatLargeNumber() from ClassicAPI instead
 function API.FormatNumberWithCommas(n)
     local str = tostring(n)
     local result = str:reverse():gsub("(%d%d%d)", "%1,")
